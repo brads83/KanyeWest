@@ -1,7 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Net.Http;
-using System.Security.Cryptography.X509Certificates;
 
 namespace KanyeWest
 {
@@ -9,59 +8,65 @@ namespace KanyeWest
     {
         static void Main(string[] args)
         {
-            for(int i = 0; i < 5; i++)
+            while (true)
             {
                 KanyeQuote();
+                Console.WriteLine();
                 RonQuote();
+                Console.WriteLine();
                 ChuckQuote();
+                Console.ReadLine();
             }
         }
         public static void KanyeQuote()
         {
             //API url
-            var kanyeURL = " https://api.kanye.rest";
+            string kanyeURL = " https://api.kanye.rest";
 
             //Allows us to call API
-            var client = new HttpClient();
+            using (HttpClient client = new HttpClient())
+            {
+                //Stores the JSON response in a variable
+                string kanyeResponse = client.GetStringAsync(kanyeURL).Result;
 
-            //Stores the JSON response in a variable
-            var kanyeResponse = client.GetStringAsync(kanyeURL).Result;
+                //Parses through the response we received to get value associated with the NAME quote
+                string kanyeQuote = JObject.Parse(kanyeResponse).GetValue("quote").ToString();
 
-            //Parses through the response we received to get value associated with the NAME quote
-            var kanyeQuote = JObject.Parse(kanyeResponse).GetValue("quote").ToString();
-
-            Console.WriteLine($"Kanye: {kanyeQuote}");
+                Console.WriteLine($"Kanye: {kanyeQuote}");
+            }
         }
 
         public static void RonQuote()
         {
             //Ron Swanson Url
-            var ronURL = "https://ron-swanson-quotes.herokuapp.com/v2/quotes";
+            string ronURL = "https://ron-swanson-quotes.herokuapp.com/v2/quotes";
 
-            var client = new HttpClient();
+            using (HttpClient client = new HttpClient())
+            {
+                string ronResponse = client.GetStringAsync(ronURL).Result;
 
-            var ronResponse = client.GetStringAsync(ronURL).Result;
+                string ronQuote = JArray.Parse(ronResponse).ToString().Replace('[', ' ').Replace(']', ' ').Trim();
 
-            var ronQuote = JArray.Parse(ronResponse).ToString().Replace('[', ' ').Replace(']', ' ').Trim();
-
-            Console.WriteLine($"Ron Swanson: {ronQuote}");
+                Console.WriteLine($"Ron Swanson: {ronQuote}");
+            }
         }
-        
+
         public static void ChuckQuote()
         {
-            var chuckURL = "https://api.chucknorris.io/jokes/random";
+            string chuckURL = "https://api.chucknorris.io/jokes/random";
 
-            var client = new HttpClient();
+            using (HttpClient client = new HttpClient())
+            {
+                string chuckResponse = client.GetStringAsync(chuckURL).Result;
 
-            var chuckResponse = client.GetStringAsync(chuckURL).Result;
+                string chuckQuote = JObject.Parse(chuckResponse).GetValue("value").ToString();
 
-            var chuckQuote = JObject.Parse(chuckResponse).GetValue("value").ToString();
-
-            Console.WriteLine($"Chuck Norris: {chuckQuote}");
+                Console.WriteLine($"Chuck Norris: {chuckQuote}");
+            }
         }
 
 
 
-        
+
     }
 }
